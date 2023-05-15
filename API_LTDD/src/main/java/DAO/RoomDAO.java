@@ -51,6 +51,29 @@ public class RoomDAO {
         }
         return rooms;
     }
+    
+    
+ // Lấy danh sách đối tượng Room theo HotelID từ database
+    public List<Room> getRoomsByHotelId(String searchByHotelId) throws SQLException {
+        List<Room> rooms = new ArrayList<>();
+        String query = "SELECT * FROM Room WHERE hotel_id = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, searchByHotelId);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            Room room = new Room(
+                resultSet.getInt("room_id"),
+                resultSet.getString("hotel_id"),
+                resultSet.getString("room_number"),
+                resultSet.getString("room_type"),
+                resultSet.getBigDecimal("rental_rate"),
+                resultSet.getInt("room_capacity"),
+                resultSet.getString("room_status")
+            );
+            rooms.add(room);
+        }
+        return rooms;
+    }
 
     // Lấy đối tượng Room từ database theo ID
     public Room getRoomById(int roomId) throws SQLException {
@@ -110,11 +133,12 @@ public class RoomDAO {
         statement.executeUpdate();
     }
 
-    // Xóa đối tượng Room trong database theo ID
-    public void deleteRoom(int roomId) throws SQLException {
-        String query = "DELETE FROM Room WHERE room_id = ?";
+    // thay đổi status đối tượng Room trong database theo ID
+    public void updateRoomStatus(int roomId, String roomStatus) throws SQLException {
+        String query = "UPDATE Room SET room_status = ? WHERE room_id = ?";
         PreparedStatement statement = connection.prepareStatement(query);
-        statement.setInt(1, roomId);
+        statement.setString(1, roomStatus);
+        statement.setInt(2, roomId);
         statement.executeUpdate();
     }
 }

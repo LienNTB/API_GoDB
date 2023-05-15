@@ -61,7 +61,11 @@ public class AdminRoomController extends HttpServlet {
 		response.setContentType("application/json;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		String action = request.getParameter("action");
-		int roomId = Integer.parseInt(request.getParameter("room_id"));
+		int roomId = 0;
+		if (!"searchByHotelId".equals(action)) 
+		{
+			roomId = Integer.parseInt(request.getParameter("room_id"));
+		}
 
 		// lấy thông tin một place
 		if ("search".equals(action)) {
@@ -77,7 +81,20 @@ public class AdminRoomController extends HttpServlet {
 				e.printStackTrace();
 				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			}
-		} 
+		}
+		else if ("searchByHotelId".equals(action)) {
+			List<Room> rooms = null;
+
+			String searchByHotelId = request.getParameter("searchByHotelId");
+			
+			try {
+				rooms = roomDAO.getRoomsByHotelId(searchByHotelId);
+				ObjectMapper obj = new ObjectMapper();
+				obj.writeValue(response.getOutputStream(), rooms);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		else if ("add".equals(action)) {
 
 			String hoteId = request.getParameter("hotel_id");
@@ -131,6 +148,28 @@ public class AdminRoomController extends HttpServlet {
 			} catch (SQLException e) {
 				e.printStackTrace();
 				response.getWriter().write("Lỗi khi sửa phòng.");
+			}
+		}else if("updateStatus".equals(action))
+		{
+			try {
+				Room room = roomDAO.getRoomById(roomId);
+
+				if (room == null) {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				}
+				
+				String roomStatus = request.getParameter("room_status");
+				
+				room.setRoomStatus(roomStatus);
+				roomDAO.updateRoom(room);
+				
+				Room roomcheck = roomDAO.getRoomById(roomId);
+				response.getWriter().write("Cập nhật status phòng thành công."+ "\n");
+				response.getWriter().write(new ObjectMapper().writeValueAsString(roomcheck));
+			} catch (SQLException e) {
+				e.printStackTrace();
+				response.getWriter().write("Lỗi khi cập nhật status phòng.");
 			}
 		}
 	}
