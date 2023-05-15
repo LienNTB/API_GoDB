@@ -117,6 +117,7 @@ public class HotelController extends HttpServlet {
 	    		String email = request.getParameter("email");
 	    		String website = request.getParameter("website");
 	    		String image = request.getParameter("image_link");
+	    
 	    		
 	    		hotel.setHotelName(hotelName);
 	    		hotel.setHotelAddress(hotelAddress);

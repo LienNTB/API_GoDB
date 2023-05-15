@@ -2,8 +2,12 @@ package Controller.Admin;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.sql.Connection;
+import java.sql.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import DAO.AccountDAO;
 import DBConnect.DBConnect;
 import Model.Account;
+import Model.Customer;
+import Model.Staff;
 
 @WebServlet(urlPatterns = { "/admin/account" })
 public class AccountController extends HttpServlet {
@@ -140,8 +146,98 @@ public class AccountController extends HttpServlet {
 					response.getWriter().write("Lỗi khi xóa tài khoản");
 				}
 			}
-
+		 else if("login".equals(action))
+		 {
+			 	String username = request.getParameter("username");
+			    String password = request.getParameter("password");
+			    try {
+			        boolean canLogin = accountDAO.checkLogin(username, password);
+			        if (canLogin) {
+			            response.getWriter().write("Đăng nhập thành công.");
+			        } else {
+			            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			        }
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			    }
 		 }
+		 else if("signupcustomer".equals(action))
+		 {
+			 	String username = request.getParameter("username");
+			    String fullName = request.getParameter("full_name");
+			    String email = request.getParameter("email");
+			    String phoneNumber = request.getParameter("phone_number");
+			    String imageLink = request.getParameter("image_link");
+			    String address = request.getParameter("address");
+			    boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
+			    String birthDayString = request.getParameter("birth_day");
+				System.out.println(birthDayString);
+				
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				Date birthDay = null;
+				if (birthDayString != null && !birthDayString.isEmpty()) {
+		            try {
+		                java.util.Date utilDate = dateFormat.parse(birthDayString); // Chuyển đổi chuỗi thành kiểu java.util.Date
+		                birthDay = new Date(utilDate.getTime()); // Chuyển đổi java.util.Date thành java.sql.Date
+		                System.out.println(utilDate);
+		            } catch (ParseException e) {
+		                e.printStackTrace();
+						System.out.println("Lỗi định dạng date khách hàng rồi bạn ơi");
+		            }
+		        }
+			    String accPassword = request.getParameter("acc_password");
+
+			    Account account = new Account(null, username, null, null, null, true, accPassword);
+			    Customer customer =  new Customer(null, fullName, email, phoneNumber, imageLink, address, gender,
+						birthDay);
+
+			    try {
+			        accountDAO.SignupCustomer(account, customer);
+			        response.getWriter().write("Đăng ký tài khoản thành công.");
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			        response.getWriter().write("Lỗi khi đăng ký tài khoản.");
+			    }
+		 }
+		 else if("signupstaff".equals(action))
+		 {
+			 	String username = request.getParameter("username");
+			    String fullName = request.getParameter("full_name");
+			    String email = request.getParameter("email");
+			    String phoneNumber = request.getParameter("phone_number");
+			    String imageLink = request.getParameter("image_link");
+			    boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
+			    String birthDayString = request.getParameter("birth_day");
+			    String cic = request.getParameter("cic");
+			    String staffAddress = request.getParameter("staff_address");
+
+			    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			    Date birthDay = null;
+			    if (birthDayString != null && !birthDayString.isEmpty()) {
+			        try {
+			            java.util.Date utilDate = dateFormat.parse(birthDayString);
+			            birthDay = new Date(utilDate.getTime());
+			        } catch (ParseException e) {
+			            e.printStackTrace();
+			            System.out.println("Lỗi định dạng ngày sinh của nhân viên.");
+			        }
+			    }
+
+			    String accPassword = request.getParameter("acc_password");
+			    Account account = new Account(null, username, null, null, null, true, accPassword);
+			    Staff staff = new Staff(null, fullName, email, phoneNumber, gender, birthDay, cic, staffAddress, imageLink);
+
+			    try {
+			        accountDAO.SignupStaff(account, staff);
+			        response.getWriter().write("Đăng ký tài khoản nhân viên thành công.");
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			        response.getWriter().write("Lỗi khi đăng ký tài khoản nhân viên.");
+			    }
+		 }
+		 }
+	
 
 
 //	protected void doPut(HttpServletRequest request, HttpServletResponse response)
