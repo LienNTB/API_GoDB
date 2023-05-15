@@ -1,0 +1,66 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="#00FDFDFD"
+    app:cardCornerRadius="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="146dp"
+        android:background="#FFFFFF"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageViewHotel"
+            android:layout_width="435dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#0C0C0C"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewHotelName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#03B89E9E"
+                android:text="Hotel Name"
+                android:textColor="#F8F6F6"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textViewProvince"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#03B89E9E"
+                android:text="Province"
+                android:textColor="#F8F6F6"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textViewDiaChi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#03B89E9E"
+                android:text="Dia chi"
+                android:textColor="#F8F6F6"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

@@ -20,11 +20,11 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="380dp"
-        android:layout_height="662dp"
+        android:layout_width="241dp"
+        android:layout_height="383dp"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@drawable/logo" />

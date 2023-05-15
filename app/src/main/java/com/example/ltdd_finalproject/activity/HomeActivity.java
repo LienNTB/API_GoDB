@@ -10,7 +10,8 @@ import android.widget.Button;
 import com.example.ltdd_finalproject.R;
 
 public class HomeActivity extends AppCompatActivity {
-    Button allTourBtn;
+    Button allTourBtn,buttonHotel;
+    Button allVehicleBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,7 +20,10 @@ public class HomeActivity extends AppCompatActivity {
         setEvent();
     }
     protected void anhXa(){
+
         allTourBtn=(Button) findViewById(R.id.buttonTous);
+        allVehicleBtn=(Button) findViewById(R.id.buttonVehicle);
+        buttonHotel=(Button) findViewById(R.id.buttonHotel);
     }
     protected  void setEvent(){
         //Event for Tours
@@ -27,6 +31,20 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, AllTourActivity.class);
+                startActivity(intent);
+            }
+        });
+        allVehicleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, AllVehicleActivity.class);
+                startActivity(intent);
+            }
+        });
+        buttonHotel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(HomeActivity.this, AllHotelActivity.class);
                 startActivity(intent);
             }
         });

@@ -35,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        //
         //forgot
         forgotTextview.setOnClickListener(new View.OnClickListener() {
             @Override
