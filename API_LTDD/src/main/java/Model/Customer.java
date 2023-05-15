@@ -57,10 +57,11 @@ public class Customer {
 		this.gender = gender;
 	}
 	public String getBirthDay() throws ParseException {
-		SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
-        return outputFormat.format(inputFormat.parse(birthDay.toString()));
-//		return birthDay;
+		 if (birthDay != null) {
+		        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		        return outputFormat.format(birthDay);
+		    }
+		    return "";
 	}
 	public void setBirthDay(Date birthDay) {
 		this.birthDay = birthDay;

@@ -91,7 +91,7 @@ public class CustomerController extends HttpServlet {
 			String birthDayString = request.getParameter("birth_day");
 			System.out.println(birthDayString);
 			
-			 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Date birthDay = null;
 			if (birthDayString != null && !birthDayString.isEmpty()) {
 	            try {
@@ -130,14 +130,27 @@ public class CustomerController extends HttpServlet {
 				String imageLink = request.getParameter("image_link");
 				String address = request.getParameter("address");
 				boolean gender = Boolean.parseBoolean(request.getParameter("gender"));
-				String birthDay = request.getParameter("birthday");
+				String birthDayString = request.getParameter("birth_day");
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				Date birthDay = null;
+				if (birthDayString != null && !birthDayString.isEmpty()) {
+		            try {
+		                java.util.Date utilDate = dateFormat.parse(birthDayString); // Chuyển đổi chuỗi thành kiểu java.util.Date
+		                birthDay = new Date(utilDate.getTime()); // Chuyển đổi java.util.Date thành java.sql.Date
+		                System.out.println(utilDate);
+		            } catch (ParseException e) {
+		                e.printStackTrace();
+						System.out.println("Lỗi định dạng date khách hàng rồi bạn ơi");
+		            }
+		        }
+		            
 				customer.setFullName(fullName);
 				customer.setEmail(email);
 				customer.setPhoneNumber(phoneNumber);
 				customer.setImageLink(imageLink);
 				customer.setAddress(address);
 				customer.setGender(gender);
-				customer.setBirthDay(java.sql.Date.valueOf(birthDay));
+				customer.setBirthDay(birthDay);
 				customerDAO.updateCustomer(customer);
 				response.getWriter().write("Cập nhật khách hàng thành công.");
 			} catch (SQLException e) {

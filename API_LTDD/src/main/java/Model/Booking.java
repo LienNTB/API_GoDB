@@ -1,5 +1,7 @@
 package Model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Booking {
@@ -21,6 +23,19 @@ public class Booking {
         this.hotelId = hotelId;
         this.bookingDate = bookingDate;
         this.bookingType = bookingType;
+        
+        if(vehicleId == "")
+		{
+			this.vehicleId = null;
+		}
+        else if(tourId == "")
+		{
+			this.tourId = null;
+		}
+        else if(hotelId == "")
+        {
+        	this.hotelId=null;
+        }
     }
 
     public String getBookingId() {
@@ -71,10 +86,30 @@ public class Booking {
         this.hotelId = hotelId;
     }
 
-    public Date getBookingDate() {
-        return bookingDate;
-    }
-
+    public String getBookingDate() throws ParseException 
+    {
+		 if (bookingDate != null) {
+		        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		        return outputFormat.format(bookingDate);
+		    }
+		    return "";
+	}
+    
+    public void checkType()
+	{
+        if(vehicleId == "")
+		{
+			this.vehicleId = null;
+		}
+        else if(tourId == "")
+		{
+			this.tourId = null;
+		}
+        else if(hotelId=="")
+        {
+        	this.hotelId=null;
+        }
+	}
     public void setBookingDate(Date bookingDate) {
         this.bookingDate = bookingDate;
     }

@@ -53,7 +53,7 @@ public class CustomerDAO {
 		String sql = "SELECT * FROM Customer";
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		ResultSet rs = stmt.executeQuery();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		
 		while (rs.next()) {
 			String customer_id = rs.getString("customer_id");
 			String full_name = rs.getString("full_name");
@@ -77,7 +77,7 @@ public class CustomerDAO {
 		PreparedStatement stmt = conn.prepareStatement(sql);
 		stmt.setString(1, customer_id);
 		ResultSet rs = stmt.executeQuery();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		if (rs.next()) {
 			String full_name = rs.getString("full_name");
 			String email = rs.getString("email");
@@ -85,13 +85,11 @@ public class CustomerDAO {
 			String image_link = rs.getString("image_link");
 			String cus_address = rs.getString("cus_address");
 			boolean gender = rs.getBoolean("gender");
-			java.sql.Date bDate = rs.getDate("birth_day");
-			java.util.Date birthDay = new java.util.Date(bDate.getTime());
-			String formattedBirthDay = new SimpleDateFormat("yyyy/MM/dd").format(birthDay);
-			Customer customer = new Customer(customer_id, full_name, email, phone_number, image_link, cus_address,
-					gender, birthDay);
-//	            customer.setFormattedBirthDay(formattedBirthDay);
-			return customer;
+			 Date bDate = rs.getDate("birth_day");
+//		     java.util.Date birthDay = new java.util.Date(bDate.getTime());
+		        Customer customer = new Customer(customer_id, full_name, email, phone_number, image_link, cus_address,
+		                gender, bDate);
+		        return customer;
 		}
 
 		return null;
@@ -109,7 +107,7 @@ public class CustomerDAO {
 		stmt.setString(5, customer.getAddress());
 		stmt.setBoolean(6, customer.isGender());
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = null;
 		try {
 			java.util.Date utilDate = dateFormat.parse(customer.getBirthDay()); // Chuyển đổi chuỗi thành kiểu
