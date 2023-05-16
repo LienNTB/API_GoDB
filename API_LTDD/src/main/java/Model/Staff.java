@@ -1,5 +1,7 @@
 	package Model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Staff {
@@ -13,8 +15,9 @@ public class Staff {
     private String address;
     private String imageLink;
 
-    public Staff(String staffId, String fullName, String email, String phoneNumber, boolean gender, Date birthDay, String cic, String address, String imageLink) {
-        this.staffId = staffId;
+    public Staff(String staffId, String fullName, String email, String phoneNumber, boolean gender,Date birthDay, String cic, String address, String imageLink) {
+        super();
+    	this.staffId = staffId;
         this.fullName = fullName;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -25,7 +28,8 @@ public class Staff {
         this.imageLink = imageLink;
     }
 
-    public String getStaffId() {
+
+	public String getStaffId() {
         return staffId;
     }
 
@@ -65,10 +69,13 @@ public class Staff {
         this.gender = gender;
     }
 
-    public Date getBirthDay() {
-        return birthDay;
-    }
-
+	public String getBirthDay() throws ParseException {
+		 if (birthDay != null) {
+		        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		        return outputFormat.format(birthDay);
+		    }
+		    return "";
+	}
     public void setBirthDay(Date birthDay) {
         this.birthDay = birthDay;
     }

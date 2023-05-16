@@ -158,20 +158,6 @@ public class CustomerController extends HttpServlet {
 				response.getWriter().write("Lỗi khi cập nhật khách hàng.");
 			}
 		}
-		///////////////////////////////
-		else if ("delete".equals(action)) {
-			try {
-				Customer customer = customerDAO.getCustomerById(customerId);
-				if (customer == null) {
-					response.sendError(HttpServletResponse.SC_NOT_FOUND);
-					return;
-				}
-				customerDAO.deleteCustomer(customer);
-				response.getWriter().write("Xóa khách hàng thành công");
-			} catch (SQLException e) {
-				e.printStackTrace();
-				response.getWriter().write("Lỗi khi xóa khách hàng.");
-			}
-		}
+		
 	}
 }
