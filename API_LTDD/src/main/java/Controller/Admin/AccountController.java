@@ -1,6 +1,7 @@
 package Controller.Admin;
 
 import java.io.IOException;
+import org.json.JSONObject;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import DAO.AccountDAO;
 import DBConnect.DBConnect;
@@ -62,7 +64,7 @@ public class AccountController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("application/json;charset=UTF-8");
+		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 		String action = request.getParameter("action");
 		String accountId = request.getParameter("id");
@@ -150,11 +152,21 @@ public class AccountController extends HttpServlet {
 			 	String username = request.getParameter("username");
 			    String password = request.getParameter("password");
 			    try {
-			        boolean canLogin = accountDAO.checkLogin(username, password);
-			        if (canLogin) {
-			            response.getWriter().write("Đăng nhập thành công.");
+			    	String accountType = accountDAO.checkLogin(username, password);
+			        if (accountType != null) {
+			        	JSONObject jsonResponse = new JSONObject();
+			            jsonResponse.put("success", "true");
+			            jsonResponse.put("message", "Đăng nhập thành công.");
+			            jsonResponse.put("account_type", accountType);
+			            response.setContentType("application/json");
+			            response.getWriter().write(jsonResponse.toString());
 			        } else {
-			            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			        	 JSONObject jsonResponse = new JSONObject();
+			             jsonResponse.put("success", "false");
+			             jsonResponse.put("message", "Sai tên đăng nhập hoặc mật khẩu.");
+			             response.setContentType("application/json");
+			             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			             response.getWriter().write(jsonResponse.toString());
 			        }
 			    } catch (SQLException e) {
 			        e.printStackTrace();
@@ -193,7 +205,12 @@ public class AccountController extends HttpServlet {
 
 			    try {
 			        accountDAO.SignupCustomer(account, customer);
-			        response.getWriter().write("Đăng ký tài khoản thành công.");
+			        JSONObject jsonResponse = new JSONObject();
+		            jsonResponse.put("success", "true");
+		            jsonResponse.put("message", "Đăng kí tài khoản thành công.");
+		            jsonResponse.put("account_type", "Customer");
+		            response.setContentType("application/json");
+		            response.getWriter().write(jsonResponse.toString());
 			    } catch (SQLException e) {
 			        e.printStackTrace();
 			        response.getWriter().write("Lỗi khi đăng ký tài khoản.");
@@ -238,56 +255,6 @@ public class AccountController extends HttpServlet {
 		 }
 	
 
-
-//	protected void doPut(HttpServletRequest request, HttpServletResponse response)
-//			throws ServletException, IOException {
-//		String accountId = request.getParameter("id");
-//		
-//		try {
-//			Account account = accountDAO.getAccountById(accountId);	
-//			if (account == null) {
-//				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-//				return;
-//			}
-//			String username = request.getParameter("username");
-//			String accountType = request.getParameter("type");
-//			String customerId = request.getParameter("customer_id");
-//			String staffId = request.getParameter("staff_id");
-//			Boolean status = Boolean.parseBoolean(request.getParameter("status"));
-//			String password =request.getParameter("password");
-//			account.setAccountId(accountId);
-//			account.setUsername(username);
-//			account.setAccountType(accountType);
-//			account.setCustomerId(customerId);
-//			account.setStaffId(staffId);
-//			account.setAcc_password(password);
-//			account.setAcc_status(status);
-//			accountDAO.updateAccount(account);
-//			response.setStatus(HttpServletResponse.SC_OK);
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//		}
-//	}
-
-//	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-//			throws ServletException, IOException {
-//		try {
-//			String accountId = request.getParameter("account_id");
-//
-//			Account account = accountDAO.getAccountById(accountId);
-//			if (account == null) {
-//				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-//				return;
-//			}
-//
-//			accountDAO.deleteAccount(account);
-//			response.setStatus(HttpServletResponse.SC_OK);
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//		}
-//	}
 
 	public void destroy() {
 		try {
