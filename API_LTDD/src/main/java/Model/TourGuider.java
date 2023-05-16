@@ -1,6 +1,8 @@
 package Model;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -45,10 +47,13 @@ public class TourGuider {
         this.fullName = fullName;
     }
 
-    public Date getBirthDay() {
-        return birthDay;
-    }
-
+	public String getBirthDay() throws ParseException {
+		 if (birthDay != null) {
+		        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		        return outputFormat.format(birthDay);
+		    }
+		    return "";
+	}
     public void setBirthDay(Date birthDay) {
         this.birthDay = birthDay;
     }
