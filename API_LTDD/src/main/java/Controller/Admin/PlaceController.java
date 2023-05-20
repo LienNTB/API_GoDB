@@ -21,7 +21,7 @@ import Model.Place;
 import DBConnect.DBConnect;
 
 @WebServlet(urlPatterns = { "/admin/places" })
-public class AdminPlaceController extends HttpServlet {
+public class PlaceController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private PlaceDAO placeDAO;
 	private Connection conn;
@@ -36,7 +36,7 @@ public class AdminPlaceController extends HttpServlet {
 		}
 	}
 
-	public AdminPlaceController() {
+	public PlaceController() {
 		super();
 	}
 

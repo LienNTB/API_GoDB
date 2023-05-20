@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import DAO.AccountDAO;
@@ -117,7 +119,7 @@ public class BookingController extends HttpServlet {
 	        }
 			Booking newBooking = new Booking(bookingId, customerId, staffId, vehicleId, tourId, hotelId, bookingDay,
 					bookingType);
-//			newBooking.checkType();
+
 			try {
 				bookingDAO.addBooking(newBooking);
 				response.getWriter().write("Thêm giao dịch thành công.");
@@ -126,6 +128,41 @@ public class BookingController extends HttpServlet {
 				response.getWriter().write("Lỗi khi thêm giao dịch.");
 				System.out.println("Lỗi add giao dịch rồi bạn ơi");
 			}
+		}
+			else if ("addTour".equals(action)) {
+//				String bookingId = request.getParameter("booking_id");
+				String customerId = request.getParameter("customer_id");
+				String tourId = request.getParameter("tour_id");	
+				String bookingDayString = request.getParameter("booking_date");
+				System.out.println(bookingDayString);
+				
+				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+				Date bookingDay = null;
+				if (bookingDayString != null && !bookingDayString.isEmpty()) {
+		            try {
+		                java.util.Date utilDate = dateFormat.parse(bookingDayString); // Chuyển đổi chuỗi thành kiểu java.util.Date
+		                bookingDay = new Date(utilDate.getTime()); // Chuyển đổi java.util.Date thành java.sql.Date
+		                System.out.println(utilDate);
+		            } catch (ParseException e) {
+		                e.printStackTrace();
+						System.out.println("Lỗi định dạng date booking rồi bạn ơi");
+		            }
+		        }
+				Booking newBooking = new Booking(null, customerId,null, null, tourId, null, bookingDay, null);
+
+				try {
+					bookingDAO.addBookingTour(newBooking);
+					 JSONObject jsonResponse = new JSONObject();
+			            jsonResponse.put("success", "true");
+			            jsonResponse.put("message", "Đặt tour thành công");
+			            response.setContentType("application/json");
+			            response.setCharacterEncoding("UTF-8");
+			            response.getWriter().write(jsonResponse.toString());
+				} catch (SQLException e) {
+					e.printStackTrace();
+					response.getWriter().write("Lỗi khi đặt tour.");
+//					System.out.println("Lỗi add giao dịch rồi bạn ơi");
+				}
 //			
 //			
 //			Customer newCustomer = new Customer(customerId, fullName, email, phoneNumber, imageLink, address, gender,

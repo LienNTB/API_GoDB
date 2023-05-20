@@ -158,6 +158,7 @@ public class AccountController extends HttpServlet {
 			            jsonResponse.put("success", "true");
 			            jsonResponse.put("message", "Đăng nhập thành công.");
 			            jsonResponse.put("account_type", accountType);
+			            jsonResponse.put("username", username);
 			            response.setContentType("application/json");
 			            response.getWriter().write(jsonResponse.toString());
 			        } else {
@@ -208,8 +209,9 @@ public class AccountController extends HttpServlet {
 			        JSONObject jsonResponse = new JSONObject();
 		            jsonResponse.put("success", "true");
 		            jsonResponse.put("message", "Đăng kí tài khoản thành công.");
-		            jsonResponse.put("account_type", "Customer");
+//		            jsonResponse.put("account_type", "Customer");
 		            response.setContentType("application/json");
+		            response.setCharacterEncoding("UTF-8");
 		            response.getWriter().write(jsonResponse.toString());
 			    } catch (SQLException e) {
 			        e.printStackTrace();
@@ -252,7 +254,48 @@ public class AccountController extends HttpServlet {
 			        response.getWriter().write("Lỗi khi đăng ký tài khoản nhân viên.");
 			    }
 		 }
+		 else if("profile".equals(action))
+		 {
+			 String username = request.getParameter("username");
+			    try {
+			        Customer customer = accountDAO.Profile(username);
+			        if (customer != null) {
+			            // Tạo một đối tượng JSONObject và đưa thông tin của tài khoản customer vào đó
+			            JSONObject jsonResponse = new JSONObject();
+			            jsonResponse.put("success", "true");
+			            jsonResponse.put("message", "Lấy thông tin tài khoản thành công.");
+			            jsonResponse.put("customer_id", customer.getCustomerId());
+			            jsonResponse.put("full_name", customer.getFullName());
+			            jsonResponse.put("email", customer.getEmail());
+			            jsonResponse.put("phone_number", customer.getPhoneNumber());
+			            jsonResponse.put("image_link", customer.getImageLink());
+			            jsonResponse.put("address", customer.getAddress());
+			            jsonResponse.put("gender", customer.isGender());
+			            try {
+			                String birthDay = customer.getBirthDay();
+			                jsonResponse.put("birthday", birthDay);
+			            } catch (ParseException e) {
+			                e.printStackTrace();
+			                jsonResponse.put("birthday",  JSONObject.NULL);
+			            }
+			            
+			            response.setContentType("application/json");
+			            response.getWriter().write(jsonResponse.toString());
+			        } else {
+			            JSONObject jsonResponse = new JSONObject();
+			            jsonResponse.put("success", "false");
+			            jsonResponse.put("message", "Không tìm thấy thông tin tài khoản.");
+			            response.setContentType("application/json");
+			            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			            response.getWriter().write(jsonResponse.toString());
+			        }
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			        
+			    }
 		 }
+	}
 	
 
 

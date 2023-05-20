@@ -248,7 +248,7 @@ public class AccountDAO {
 //	            ResultSet rs1 = stmt1.executeQuery();
 	            return accountId;
 	        }
-	        public void SignupStaff(Account account, Staff staff) throws SQLException {
+	        public void SignupStaff(Account account, Staff staff)  throws SQLException {
 	            String staffId = generateStaffId();
 	            String accountId = generateAccountId();
 	            String staffSql = "INSERT INTO Staff (staff_id, full_name, email, phone_number, gender, birth_day, cic, staff_address, image_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -294,6 +294,33 @@ public class AccountDAO {
 	                throw e;
 	            }
 	    }
+	        public Customer Profile (String username) throws SQLException {
+	        	 String sql ="SELECT A.customer_id, C.full_name, C.email, C.phone_number, C.image_link, C.cus_address, C.gender, C.birth_day " +
+	                    "FROM Account A " +
+	                    "INNER JOIN Customer C ON A.customer_id = C.customer_id " +
+	                    "WHERE A.username = ?";
+	            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+	                statement.setString(1, username);
+	                ResultSet rs = statement.executeQuery();
+	                if (rs.next()) {
+	                    String customerId = rs.getString("customer_id");
+	                    String fullName = rs.getString("full_name");
+	                    String email = rs.getString("email");
+	                    String phoneNumber = rs.getString("phone_number");
+	                    String imageLink = rs.getString("image_link");
+	                    String address = rs.getString("cus_address");
+	                    boolean gender = rs.getBoolean("gender");
+	                    Date birthDay = rs.getDate("birth_day");
+	                    // Create a new Customer object with the retrieved information
+	                    Customer customer = new Customer(customerId, fullName, email, phoneNumber, imageLink, address, gender, birthDay);
+	                    return customer;
+	                }
+	            } catch (SQLException e) {
+	            	System.out.println("Lỗi bên DAO");
+	                throw e;
+	            }
+	            return null;
+	        }
 }
 	    
 	    

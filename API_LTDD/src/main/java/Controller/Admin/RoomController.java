@@ -20,7 +20,7 @@ import Model.Place;
 import Model.Room;
 
 @WebServlet("/admin/rooms" )
-public class AdminRoomController extends HttpServlet {
+public class RoomController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private RoomDAO roomDAO;
 	private Connection conn;
@@ -35,7 +35,7 @@ public class AdminRoomController extends HttpServlet {
 		}
 	}
    
-    public AdminRoomController() {
+    public RoomController() {
         super();
     }
 
