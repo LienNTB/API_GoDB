@@ -122,13 +122,4 @@ public class CustomerDAO {
 		stmt.executeUpdate();
 	}
 
-	// Xóa khách hàng theo customer_id
-	public void deleteCustomer(Customer customer) throws SQLException {
-		
-		// phần này sửa lại chỉ thay đổi status thôi chứ k xóa
-		String sql = " FROM customers WHERE customer_id = ?";
-		PreparedStatement stmt = conn.prepareStatement(sql);
-		stmt.setString(1, customer.getCustomerId());
-		stmt.executeUpdate();
-	}
 }

@@ -1,7 +1,11 @@
 package Model;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class Tour {
     private String tourId;
@@ -9,14 +13,14 @@ public class Tour {
     private String placeId;
     private String tourName;
     private String placeGo;
-    private LocalDate dateGo;
-    private LocalDate dateBack;
+    private Date dateGo;
+    private Date dateBack;
     private int numPerson;
     private BigDecimal price;
     private String imageLink;
     private boolean state;
 
-    public Tour(String tourId, String tourGuiderId, String placeId, String tourName, String placeGo, LocalDate dateGo, LocalDate dateBack, int numPerson, BigDecimal price, String imageLink, boolean state) {
+    public Tour(String tourId, String tourGuiderId, String placeId, String tourName, String placeGo, Date dateGo, Date dateBack, int numPerson, BigDecimal price, String imageLink, boolean state) {
         this.tourId = tourId;
         this.tourGuiderId = tourGuiderId;
         this.placeId = placeId;
@@ -30,7 +34,8 @@ public class Tour {
         this.state = state;
     }
 
-    public String getTourId() {
+
+	public String getTourId() {
         return tourId;
     }
 
@@ -70,19 +75,14 @@ public class Tour {
         this.placeGo = placeGo;
     }
 
-    public LocalDate getDateGo() {
-        return dateGo;
-    }
 
-    public void setDateGo(LocalDate dateGo) {
+    public void setDateGo(Date dateGo) {
         this.dateGo = dateGo;
     }
 
-    public LocalDate getDateBack() {
-        return dateBack;
-    }
 
-    public void setDateBack(LocalDate dateBack) {
+
+    public void setDateBack(Date dateBack) {
         this.dateBack = dateBack;
     }
 
@@ -117,4 +117,19 @@ public class Tour {
     public void setState(boolean state) {
         this.state = state;
     }
+   
+	public String getDateGo() throws ParseException {
+		 if (dateGo != null) {
+		        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		        return outputFormat.format(dateGo);
+		    }
+		    return "";
+	}
+	public String getDateBack() throws ParseException {
+		 if (dateBack != null) {
+		        SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+		        return outputFormat.format(dateBack);
+		    }
+		    return "";
+	}
 }

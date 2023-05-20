@@ -99,19 +99,30 @@ public class AccountDAO {
 	    	stmt.setString(1, account.getAccountId());
 	    	stmt.executeUpdate();
 	        }
-	    public boolean checkLogin(String username, String password) throws SQLException {
+	    public String checkLogin(String username, String password) throws SQLException {
 	        String sql = "SELECT * FROM Account WHERE username = ? AND acc_password = ? AND acc_status = 1";
 	        try (PreparedStatement statement = conn.prepareStatement(sql)) {
 	            statement.setString(1, username);
 	            statement.setString(2, password);
 	            ResultSet rs = statement.executeQuery();
-	            return rs.next(); 
-	    }
+	            if (rs.next()) {
+	                String accountType = rs.getString("account_type");
+	                if (accountType.equals("Customer") && rs.getString("customer_id") != null) {
+	                    // Đăng nhập thành công cho khách hàng
+	                	 return "Customer";
+	                } else if (accountType.equals("Staff") && rs.getString("staff_id") != null) {
+	                    // Đăng nhập thành công cho nhân viên
+	                	return "Staff";
+	                }
+	            }
+	            // Không tìm thấy tài khoản phù hợp hoặc không hợp lệ
+	            return null;
+	        }
 	    }
 	        public void SignupCustomer(Account account,Customer customer) throws SQLException
 	        {
 	        	 String customerId = generateCustomerId();
-	        	 String accountId = UUID.randomUUID().toString().substring(0, 10);
+	        	 String accountId = generateAccountId();
 	        	 String customerSql = "INSERT INTO Customer (customer_id, full_name, email, phone_number, image_link, cus_address, gender, birth_day) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	             try (PreparedStatement stmt = conn.prepareStatement(customerSql)) {
 	                  // Tạo customer_id mới
@@ -154,40 +165,92 @@ public class AccountDAO {
 	             }
 	        }
 	        private String generateCustomerId() throws SQLException {
-	            String customerId = null;
-	            String sql = "SELECT customer_id FROM Customer WHERE customer_id = ?";
+	        	String customerId = null;
+	            String sql = "SELECT COUNT(*) AS count FROM Customer";
 	            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-	                ResultSet rs;
-	                do {
-	                	customerId = UUID.randomUUID().toString().substring(0, 10);
-	                    stmt.setString(1, customerId);
-	                    rs = stmt.executeQuery();
-	                } while (rs.next()); // Loop until a unique customer_id is found
-	            } 
-	            catch (SQLException e) {
+	                ResultSet rs = stmt.executeQuery();
+	                if (rs.next()) {
+	                    int count = rs.getInt("count");
+	                    do {
+	                    	customerId = "cs" + (count + 1);
+	                        String checkSql = "SELECT * FROM Customer WHERE customer_id = ?";
+	                        try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+	                            checkStmt.setString(1, customerId);
+	                            ResultSet checkRs = checkStmt.executeQuery();
+	                            if (checkRs.next()) {
+	                                count++;
+	                            } else {
+	                                break;
+	                            }
+	                        }
+	                    } while (true);
+	                }
+	            } catch (SQLException e) {
 	                throw e;
 	            }
 	            return customerId;
 	        }
 	        private String generateStaffId() throws SQLException {
 	            String staffId = null;
-	            String sql = "SELECT staff_id FROM Staff WHERE staff_id = ?";
+	            String sql = "SELECT COUNT(*) AS count FROM Staff";
 	            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-	                ResultSet rs;
-	                do {
-	                	staffId = UUID.randomUUID().toString().substring(0, 10);
-	                    stmt.setString(1, staffId);
-	                    rs = stmt.executeQuery();
-	                } while (rs.next()); // Loop until a unique customer_id is found
+	            	ResultSet rs = stmt.executeQuery();
+	                if (rs.next()) {
+	                    int count = rs.getInt("count");
+	                    do {
+	                    	staffId = "st" + (count + 1);
+	                        String checkSql = "SELECT * FROM Staff WHERE staff_id = ?";
+	                        try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+	                            checkStmt.setString(1, staffId);
+	                            ResultSet checkRs = checkStmt.executeQuery();
+	                            if (checkRs.next()) {
+	                                count++;
+	                            } else {
+	                                break;
+	                            }
+	                        }
+	                    } while (true);
+	                    
+	                } // Loop until a unique customer_id is found
 	            } 
 	            catch (SQLException e) {
 	                throw e;
 	            }
 	            return staffId;
 	        }
-	        public void SignupStaff(Account account, Staff staff) throws SQLException {
+	        private String generateAccountId() throws SQLException {
+	            String accountId = null;
+	            String sql = "SELECT COUNT(*) AS count FROM Account";
+	            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+	            	ResultSet rs = stmt.executeQuery();
+	                if (rs.next()) {
+	                    int count = rs.getInt("count");
+	                    do {
+	                        accountId = "ac" + (count + 1);
+	                        String checkSql = "SELECT * FROM Account WHERE account_id = ?";
+	                        try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+	                            checkStmt.setString(1, accountId);
+	                            ResultSet checkRs = checkStmt.executeQuery();
+	                            if (checkRs.next()) {
+	                                count++;
+	                            } else {
+	                                break;
+	                            }
+	                        }
+	                    } while (true);
+	                } // Loop until a unique customer_id is found
+	            } 
+	            catch (SQLException e) {
+	                throw e;
+	            }
+//	            String sql1 = "SELECT staff_id FROM Staff WHERE staff_id = ?";
+//	            PreparedStatement stmt1 = conn.prepareStatement(sql1);
+//	            ResultSet rs1 = stmt1.executeQuery();
+	            return accountId;
+	        }
+	        public void SignupStaff(Account account, Staff staff)  throws SQLException {
 	            String staffId = generateStaffId();
-	            String accountId = UUID.randomUUID().toString().substring(0, 10);
+	            String accountId = generateAccountId();
 	            String staffSql = "INSERT INTO Staff (staff_id, full_name, email, phone_number, gender, birth_day, cic, staff_address, image_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 	            try (PreparedStatement stmt = conn.prepareStatement(staffSql)) {
@@ -231,6 +294,33 @@ public class AccountDAO {
 	                throw e;
 	            }
 	    }
+	        public Customer Profile (String username) throws SQLException {
+	        	 String sql ="SELECT A.customer_id, C.full_name, C.email, C.phone_number, C.image_link, C.cus_address, C.gender, C.birth_day " +
+	                    "FROM Account A " +
+	                    "INNER JOIN Customer C ON A.customer_id = C.customer_id " +
+	                    "WHERE A.username = ?";
+	            try (PreparedStatement statement = conn.prepareStatement(sql)) {
+	                statement.setString(1, username);
+	                ResultSet rs = statement.executeQuery();
+	                if (rs.next()) {
+	                    String customerId = rs.getString("customer_id");
+	                    String fullName = rs.getString("full_name");
+	                    String email = rs.getString("email");
+	                    String phoneNumber = rs.getString("phone_number");
+	                    String imageLink = rs.getString("image_link");
+	                    String address = rs.getString("cus_address");
+	                    boolean gender = rs.getBoolean("gender");
+	                    Date birthDay = rs.getDate("birth_day");
+	                    // Create a new Customer object with the retrieved information
+	                    Customer customer = new Customer(customerId, fullName, email, phoneNumber, imageLink, address, gender, birthDay);
+	                    return customer;
+	                }
+	            } catch (SQLException e) {
+	            	System.out.println("Lỗi bên DAO");
+	                throw e;
+	            }
+	            return null;
+	        }
 }
 	    
 	    

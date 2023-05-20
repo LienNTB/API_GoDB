@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 public class DBConnect {
 
 	private final String serverName="localhost";
-	private final String dbName= "LTDD";
+	private final String dbName= "LTDD1";
 	private final String portNumber="1433";
 	private final String instance="";
 	private final String userID="sa";

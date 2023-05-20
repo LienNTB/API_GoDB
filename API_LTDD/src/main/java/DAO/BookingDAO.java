@@ -49,6 +49,29 @@ public class BookingDAO {
             throw e;
         }
     }
+    public void addBookingTour(Booking booking) throws SQLException
+    {
+    	String sql = "INSERT INTO Booking (booking_id, customer_id, staff_id, vehicle_id, tour_id, hotel_id, booking_date, booking_type) VALUES (?, ?, NULL, NULL, ?,NULL, ?, 'Tour')";
+    	String bookingId = generateBookingId();
+    	 try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+             stmt.setString(1, bookingId);
+             stmt.setString(2, booking.getCustomerId());                   
+             stmt.setString(3, booking.getTourId());
+             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+             Date date = null;
+     		try {
+     			java.util.Date utilDate = dateFormat.parse(booking.getBookingDate()); // Chuyển đổi chuỗi thành kiểu
+     																					// java.util.Date
+     			date = new Date(utilDate.getTime()); // Chuyển đổi java.util.Date thành java.sql.Date
+     		} catch (ParseException e) {
+     			e.printStackTrace();
+     		}
+             stmt.setDate(4, date);
+             stmt.executeUpdate();
+         } catch (SQLException e) {
+             throw e;
+         }
+    }
     public List<Booking> getAllBookings() throws SQLException {
 		List<Booking> bookingList = new ArrayList<>();
 		String sql = "SELECT * FROM Booking";
@@ -144,5 +167,31 @@ public class BookingDAO {
         } catch (SQLException e) {
             throw e;
         }
+    }
+    private String generateBookingId() throws SQLException {
+    	String bookingId = null;
+        String sql = "SELECT COUNT(*) AS count FROM Booking";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("count");
+                do {
+                	bookingId = "bk" + (count + 1);
+                    String checkSql = "SELECT * FROM Booking WHERE booking_id = ?";
+                    try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+                        checkStmt.setString(1, bookingId);
+                        ResultSet checkRs = checkStmt.executeQuery();
+                        if (checkRs.next()) {
+                            count++;
+                        } else {
+                            break;
+                        }
+                    }
+                } while (true);
+            }
+        } catch (SQLException e) {
+            throw e;
+        }
+        return bookingId;
     }
 }
