@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -209,6 +211,28 @@ public class TourController extends HttpServlet {
 				resp.getWriter().write("Lỗi khi cập nhật tuor");
 				// TODO: handle exception
 			}
+		}
+		else if("getPriceTour".equals(action))
+		{
+			 try {
+			    	String price = tourDAO.getTourPrice(tourId);
+			        if (price != null) 
+			        {
+			        	JSONObject jsonResponse = new JSONObject();
+			            jsonResponse.put("price", price);
+			            resp.setContentType("application/json");
+			            resp.getWriter().write(jsonResponse.toString());
+			        } else {
+			        	 JSONObject jsonResponse = new JSONObject();
+			             jsonResponse.put("message", "Không tồn tại tour");
+			             resp.setContentType("application/json");
+			             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			             resp.getWriter().write(jsonResponse.toString());
+			        }
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			    }
 		}
 		}
 	}

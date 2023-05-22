@@ -110,4 +110,20 @@ public class VehicleDAO {
     }
         return vehicles;
     }
-}
+    public String getVehiclePrice(String vehicleId) throws SQLException {
+    	String rentalRate = null;
+    	String sql = "SELECT rental_rate FROM Vehicle WHERE vehicle_id = ?";
+    	  try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+              stmt.setString(1, vehicleId);
+              try (ResultSet rs = stmt.executeQuery()) {
+                  if (rs.next()) {
+                       rentalRate = rs.getString("rental_rate");
+                  }
+              }
+          } catch (SQLException e) {
+              throw e;
+          }
+          return rentalRate;
+      }
+    }
+    

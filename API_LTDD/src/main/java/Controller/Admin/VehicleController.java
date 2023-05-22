@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -133,6 +135,28 @@ public class VehicleController extends HttpServlet {
 			}
 			
 			
+		}
+		else if("getPriceVehicle".equals(action))
+		{
+			 try {
+			    	String price = vehicleDAO.getVehiclePrice(vehicleId);
+			        if (price != null) 
+			        {
+			        	JSONObject jsonResponse = new JSONObject();
+			            jsonResponse.put("price", price);
+			            resp.setContentType("application/json");
+			            resp.getWriter().write(jsonResponse.toString());
+			        } else {
+			        	 JSONObject jsonResponse = new JSONObject();
+			             jsonResponse.put("message", "Không tồn tại phương tiện");
+			             resp.setContentType("application/json");
+			             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			             resp.getWriter().write(jsonResponse.toString());
+			        }
+			    } catch (SQLException e) {
+			        e.printStackTrace();
+			        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			    }
 		}
 		
 	}

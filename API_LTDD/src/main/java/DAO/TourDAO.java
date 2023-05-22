@@ -157,6 +157,21 @@ public class TourDAO {
         }
         return tours;
     }
+    public String getTourPrice(String tourId) throws SQLException {
+    	String price = null;
+    	String sql = "SELECT price FROM Tour WHERE tour_id = ?";
+    	  try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+              stmt.setString(1, tourId);
+              try (ResultSet rs = stmt.executeQuery()) {
+                  if (rs.next()) {
+                       price = rs.getString("price");
+                  }
+              }
+          } catch (SQLException e) {
+              throw e;
+          }
+          return price;
+      }
+    }
 
-    
-}
+   
